@@ -1,7 +1,7 @@
 import os
 import streamlit as st
 from langchain_groq import ChatGroq
-from langchain.schema import SystemMessage, HumanMessage
+from langchain_core.messages import SystemMessage, HumanMessage
 from fpdf import FPDF
 
 # ------------------ API KEY CHECK ------------------
@@ -15,7 +15,7 @@ llm = ChatGroq(
 
 # ------------------ APP UI ------------------
 st.set_page_config(page_title="StudyGenie", page_icon="📘")
-st.title("StudyGenie ")
+st.title("StudyGenie")
 
 # ------------------ SESSION STATE ------------------
 if "chat_history" not in st.session_state:
@@ -30,7 +30,6 @@ for msg in st.session_state.chat_history:
 user_input = st.chat_input("Ask anything...")
 
 if user_input:
-    # User message
     with st.chat_message("user"):
         st.markdown(user_input)
 
@@ -38,7 +37,6 @@ if user_input:
         {"role": "user", "content": user_input}
     )
 
-    # AI response
     messages = [
         SystemMessage(content="You are a helpful educational assistant."),
         HumanMessage(content=user_input)
@@ -53,9 +51,8 @@ if user_input:
         {"role": "assistant", "content": response.content}
     )
 
-# ------------------ PDF UTILS ------------------
+# ------------------ PDF FUNCTIONS ------------------
 def safe_text(text):
-    """Convert Unicode to Latin-1 safe text"""
     return text.encode("latin-1", "replace").decode("latin-1")
 
 def create_pdf(chat_history):
